@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'author-email' => env('BEARHUB_AUTHOR_EMAIL', 'replace-this@bearhub.com'),
+
+    'tag-separator' => env('BEARHUB_TAG_SEPARATOR', '===='),
+
     'syncables' => collect(explode(';', env('BEARHUB_SYNCABLES')))
         ->flatMap(function ($syncableSetting) {
             $syncable = explode('>', $syncableSetting);

@@ -33,7 +33,7 @@ trait UsesBearsDatabaseConnection
 
     public static function getBearPath()
     {
-        if ($bearPathFromEnv = env('BEAR_PATH')) return $bearPathFromEnv;
+        if ($bearPathFromEnv = env('BEARHUB_DB_PATH')) return $bearPathFromEnv;
 
         // Static cache in case of multiple calls per execution.
         static $bearPath;
@@ -41,13 +41,13 @@ trait UsesBearsDatabaseConnection
 
         preg_match('/\/Users\/([a-zA-Z0-9\s]*)\//', dirname(__DIR__), $match);
 
-        $user = throw_unless($match[1] ?? false, new \Exception('Bear: Can\'t find system\'s user'));
+        $user = throw_unless($match[1] ?? false, new \Exception('BearHub: Can\'t find system\'s user'));
 
         $bearBasePath = "/Users/{$user}/Library/Group Containers/";
         $bearPath = $bearBasePath.'/'.collect(scandir($bearBasePath))->first(function ($directory) {
             return preg_match('/shinyfrog\.bear/', $directory);
         });
 
-        return throw_unless($bearPath = $bearPath.'/Application Data', new \Exception('Bear: Can\'t find Bear in system'));
+        return throw_unless($bearPath = $bearPath.'/Application Data', new \Exception('BearHub: Can\'t find Bear in system'));
     }
 }

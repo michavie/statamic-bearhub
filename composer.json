@@ -1,30 +1,32 @@
 {
-    "name": "michavie/bearhub",
-    "authors": [
-        {
-            "name": "Micha Vie",
-            "email": "micha@freeiam.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Michavie\\Bearhub\\": "src"
-        }
-    },
-    "extra": {
-        "statamic": {
-            "name": "Bearhub",
-            "description": "Bearhub addon"
-        },
-        "laravel": {
-            "providers": [
-                "Michavie\\Bearhub\\ServiceProvider"
-            ]
-        }
-    },
-    "require": {
-        "illuminate/database": "^8.40",
-        "illuminate/support": "^8.40",
-        "vlucas/phpdotenv": "^5.3"
+  "name": "michavie/bearhub",
+  "authors": [
+    {
+      "name": "Micha Vie",
+      "email": "micha@freeiam.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Michavie\\Bearhub\\": "src"
+    }
+  },
+  "extra": {
+    "statamic": {
+      "name": "Bearhub",
+      "description": "Bearhub addon"
+    },
+    "laravel": {
+      "providers": [
+        "Michavie\\Bearhub\\ServiceProvider"
+      ]
+    }
+  },
+  "require": {
+    "php": "^7.4 || ^8.0",
+    "statamic/cms": "3.0.* || 3.1.*",
+    "illuminate/database": "^8.40",
+    "illuminate/support": "^8.40",
+    "vlucas/phpdotenv": "^5.3"
+  }
 }

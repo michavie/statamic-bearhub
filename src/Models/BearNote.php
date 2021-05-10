@@ -11,7 +11,7 @@ class BearNote extends Model
 {
     use UsesBearsDatabaseConnection, ResolvesNoteTagPivot;
 
-    protected $appends = ['content'];
+    protected $appends = ['content', 'trashed', 'archived'];
 
     public function tags()
     {
@@ -53,12 +53,22 @@ class BearNote extends Model
 
     public function getContentAttribute()
     {
-        return Str::after($this->raw_content, $this->title);
+        return Str::between($this->raw_content, $this->title, config('bearhub.tag-separator'));
+    }
+
+    public function getTrashedAttribute()
+    {
+        return (bool) $this->attributes['trashed'];
+    }
+
+    public function getArchivedAttribute()
+    {
+        return (bool) $this->attributes['archived'];
     }
 
     public function getChecksumAttribute()
     {
-        return crc32($this->content);
+        return crc32($this->raw_content);
     }
 
     protected static function boot()
@@ -66,7 +76,7 @@ class BearNote extends Model
         parent::boot();
 
         static::addGlobalScope(function ($builder) {
-            $builder->fromRaw("(select Z_PK as id, ZTITLE as title, ZTEXT as raw_content, ZTRASHED as trashed, Z_ENT as pivot_column_id from ZSFNOTE) as bear_notes");
+            $builder->fromRaw("(select Z_PK as id, ZTITLE as title, ZTEXT as raw_content, ZTRASHED as trashed, ZARCHIVED as archived, Z_ENT as pivot_column_id from ZSFNOTE) as bear_notes");
         });
     }
 }
