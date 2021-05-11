@@ -28,5 +28,8 @@
     "illuminate/database": "^8.40",
     "illuminate/support": "^8.40",
     "vlucas/phpdotenv": "^5.3"
+  },
+  "require-dev": {
+    "spatie/ray": "^1.22"
   }
 }
