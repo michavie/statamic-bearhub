@@ -10,7 +10,7 @@ return [
      *
      * Bear Parent Tag: The parent of all the child tags that are synced as taxonomies
      * Statamic Collection: The collection that will be synced with your Bear notes
-     * Statamic Taxonomy: Tags used in Bear notes will be synced with this (blueprint) field. Set null to disable.
+     * Statamic Taxonomy: Tags used in Bear notes will be synced with the terms of this taxonomy (blueprint) field. Set null to disable.
      */
     'syncables' => [
         'mycompany' /* Bear Parent Tag: e.g. mycompany, blog, website, ... */ => [
