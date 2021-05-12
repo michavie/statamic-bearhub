@@ -37,7 +37,7 @@ class SyncNotesAction
         $isNew = is_null($entry);
         $author = User::findByEmail($authorEmail = config('bearhub.author-email')) ?? User::current();
         $shouldPublish = !$bearNote->trashed && !$bearNote->archived && $bearNote->hasPublishedActionTag();
-        $shouldUpdate = $entry->{BearEntryField::NoteChecksum} !== $bearNote->checksum;
+        $shouldUpdate = $isNew || $entry->{BearEntryField::NoteChecksum} !== $bearNote->checksum;
 
         throw_unless($author, Exception::class, "BearHub: Did not find user with configured email {$authorEmail}. Be sure you have set the 'BEARHUB_AUTHOR_EMAIL' env variable.");
 
