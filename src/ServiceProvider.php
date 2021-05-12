@@ -14,6 +14,10 @@ class ServiceProvider extends AddonServiceProvider
         \Michavie\Bearhub\Widgets\BearHubWidget::class,
     ];
 
+    protected $routes = [
+        'cp'      => __DIR__.'/../routes/cp.php',
+    ];
+
     public function boot()
     {
         parent::boot();

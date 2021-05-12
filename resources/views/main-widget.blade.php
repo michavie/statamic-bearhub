@@ -13,6 +13,21 @@
         </h2>
     </header>
     <section class="px-2 py-1">
-        testing this
+        <form action="{{ route('statamic.cp.bearhub.sync-notes') }}" method="POST">
+            @csrf
+
+            @if($syncedTitles = session('syncedTitles'))
+            <h3 class="text-base text-grey-70">{{ __('Synced Notes:') }}</h3>
+            <ul class="text-sm mb-2">
+                @foreach ($syncedTitles as $title)
+                <li>{{ $title }}</li>
+                @endforeach
+            </ul>
+            @endif
+
+            <button class="flex items-center justify-center btn-flat w-full px-1">
+                {{ __('Sync Notes') }}
+            </button>
+        </form>
     </section>
 </div>

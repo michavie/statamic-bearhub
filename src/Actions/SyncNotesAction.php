@@ -21,12 +21,14 @@ class SyncNotesAction
     {
         return collect(config('bearhub.syncables'))
             ->map(fn ($statamicProperties, $bearParentTag) => Syncable::fromConfig($bearParentTag, $statamicProperties))
-            ->map(function (Syncable $syncable) {
-                $this->getBearNotesFrom($syncable->bearParentTag)
-                    ->each(fn (BearNote $bearNote) => $this->syncEntry($syncable, $bearNote));
+            ->mapWithKeys(function (Syncable $syncable) {
+                $syncedEntries = $this->getBearNotesFrom($syncable->bearParentTag)
+                    ->map(fn (BearNote $bearNote) => $this->syncEntry($syncable, $bearNote))
+                    ->filter();
+
+                return $syncedEntries->isNotEmpty() ? [$syncable->bearParentTag => $syncedEntries] : [];
             })
-            ->filter()
-            ->values();
+            ->filter();
     }
 
     private function syncEntry(Syncable $syncable, BearNote $bearNote): ?EntryContract
@@ -34,8 +36,8 @@ class SyncNotesAction
         $entry = $this->findEntryFor($bearNote, $syncable->statamicCollection);
         $isNew = is_null($entry);
         $author = User::findByEmail($authorEmail = config('bearhub.author-email')) ?? User::current();
-        $shouldPublish = !$bearNote->trashed && !$bearNote->archived && $bearNote->hasPublishedTag();
-        $shouldUpdate = $entry->{BearEntryField::NoteChecksum} !== $bearNote->checksum || $shouldPublish !== $entry->published();
+        $shouldPublish = !$bearNote->trashed && !$bearNote->archived && $bearNote->hasPublishedActionTag();
+        $shouldUpdate = $entry->{BearEntryField::NoteChecksum} !== $bearNote->checksum;
 
         throw_unless($author, Exception::class, "BearHub: Did not find user with configured email {$authorEmail}. Be sure you have set the 'BEARHUB_AUTHOR_EMAIL' env variable.");
 
@@ -46,9 +48,7 @@ class SyncNotesAction
 
     private function getBearNotesFrom(string $bearTagTitle): Collection
     {
-        $bearTag = BearTag::whereTitle($bearTagTitle)->first();
-
-        throw_unless($bearTag, Exception::class, "BearHub: Did not find any notes with Bear tag '#{$bearTagTitle}'.");
+        throw_unless($bearTag = BearTag::whereTitle($bearTagTitle)->first(), Exception::class, "BearHub: Did not find any notes with Bear tag '#{$bearTagTitle}'.");
 
         return $bearTag->notes;
     }

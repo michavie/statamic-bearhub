@@ -42,7 +42,7 @@ class BearNote extends Model
         return $this->tags->pluck('title')->contains($tagName);
     }
 
-    public function hasPublishedTag(): bool
+    public function hasPublishedActionTag(): bool
     {
         return $this->hasTag(Str::remove('#', config('bearhub.action-tags.published')));
     }
