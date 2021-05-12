@@ -1,5 +1,8 @@
 {
   "name": "michavie/bearhub",
+  "description": "BearHub is a Statamic Add-on that helps you sync your Bear App Notes with Statamic collections.",
+  "type": "statamic-addon",
+  "license": "proprietary",
   "authors": [
     {
       "name": "Micha Vie",
@@ -24,10 +27,7 @@
   },
   "require": {
     "php": "^7.4 || ^8.0",
-    "statamic/cms": "3.0.* || 3.1.*",
-    "illuminate/database": "^8.40",
-    "illuminate/support": "^8.40",
-    "vlucas/phpdotenv": "^5.3"
+    "statamic/cms": "3.0.* || 3.1.*"
   },
   "require-dev": {
     "spatie/ray": "^1.22"
