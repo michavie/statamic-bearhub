@@ -13,7 +13,7 @@ return [
      * Statamic Taxonomy: Tags used in Bear notes will be synced with the terms of this taxonomy (blueprint) field. Set null to disable.
      */
     'syncables' => [
-        'mycompany' /* Bear Parent Tag: e.g. mycompany, blog, website, ... */ => [
+        'myblog' /* Bear Parent Tag: e.g. mycompany, blog, website, ... */ => [
             'collection' => 'articles',
             'taxonomy' => 'topics',
         ],
@@ -43,7 +43,7 @@ return [
      * be considered but not present in the main content.
      * Hint: This is a great place to add parent-tag or action-tags.
      */
-    'tag-separator' => env('BEARHUB_TAG_SEPARATOR', '===='),
+    'meta-separator' => env('BEARHUB_TAG_SEPARATOR', '===='),
 
     /**
      * Action tags are ignored as taxonomies because they serve a specific purpose:
@@ -51,7 +51,7 @@ return [
     'action-tags' => [
 
         /**
-         * Use this tag below the tag-separator to mark the synced entry as published.
+         * Use this tag below the meta-separator to mark the synced entry as published.
          * Hint: If this tag does not exist in the note, the entry will be unpublished.
          */
         'published' => env('BEARHUB_TAG_PUBLISHED', 'published'),

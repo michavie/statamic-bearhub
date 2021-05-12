@@ -90,7 +90,7 @@ class BearNote extends Model
 
     public function getContentAttribute(): string
     {
-        return trim(Str::between($this->raw_content, $this->title, config('bearhub.tag-separator')));
+        return trim(Str::between($this->raw_content, $this->title, config('bearhub.meta-separator')));
     }
 
     public function getTrashedAttribute(): bool
