@@ -5,7 +5,7 @@
 
 I wanted to start this off with a bear joke, but you wouldn’t be able to bear it. Whatever.
 
-## What is BearHub
+## What is BearHub 🧸📝
 
 BearHub syncs your [Bear App](https://bear.app) notes with your website’s Statamic collections.
 Because of that, you can write your articles across many websites in the beautiful Bear markdown editor and sync them with your sites whenever you want.

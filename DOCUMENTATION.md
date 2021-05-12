@@ -31,13 +31,26 @@ In the syncable section above, you have set up a connection using a specified pa
 
 ## Action Tags
 
-- `published`: Notes tagged with this tag will mark the Statamic entry as published ()
+- `published`: Notes tagged with this tag will mark the Statamic entry as published
 
 You can configure action tags to your preference in the `bearhub.php` config file.
 
 ## The Meta Section
 
-The meta section starts with a configurable meta separator, a string after which everything is written will be excluded from the main content.
+The meta section starts with a configurable meta separator, a string after which everything is written will be excluded from the main content:
+
+```
+
+Your main article h
+
+====
+#myblog (Bear Parent Tag)
+#myblog/news #myblog/tech #myblog/global
+#published (Action Tag)
+
+This is the meta section. Everything written here will be excluded from the main content.
+
+```
 
 This is useful for:
 
