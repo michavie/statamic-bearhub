@@ -11,6 +11,7 @@ use Statamic\Facades\Taxonomy;
 use Illuminate\Support\Collection;
 use Michavie\Bearhub\BearEntryField;
 use Michavie\Bearhub\Models\BearTag;
+use Statamic\Facades\AssetContainer;
 use Michavie\Bearhub\Models\BearNote;
 use Statamic\Contracts\Auth\User as UserContract;
 use Statamic\Contracts\Entries\Entry as EntryContract;
@@ -80,10 +81,12 @@ class SyncNotesAction
 
     private function getEntryData(Syncable $syncable, BearNote $bearNote, UserContract $author): array
     {
+        $content = $this->getContentWithImages($bearNote);
+
         $data = [
             'title' => $bearNote->title,
             'author' => $author->id(),
-            'content' => $bearNote->content,
+            'content' => $content,
             BearEntryField::NoteId => $bearNote->id,
             BearEntryField::NoteChecksum => $bearNote->checksum,
         ];
@@ -94,5 +97,23 @@ class SyncNotesAction
         }
 
         return $data;
+    }
+
+    private function getContentWithImages(BearNote $bearNote): string
+    {
+        return $bearNote->getContentAndStoreImages(function ($originalPath, $newFileName) {
+            $basePath = config('bearhub.storage.path');
+            $path = "{$basePath}/{$newFileName}";
+            $containerHandle = config('bearhub.storage.container');
+
+            throw_unless($container = AssetContainer::findByHandle($containerHandle), Exception::class, "BearHub: Did not find asset container '{$containerHandle}'.");
+
+            $asset = $container->makeAsset($basePath);
+            $asset->disk()->put($path, file_get_contents($originalPath));
+            $asset->path($path);
+            $asset->save();
+
+            return $asset->url();
+        });
     }
 }

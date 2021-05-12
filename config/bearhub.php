@@ -62,4 +62,12 @@ return [
      * If, for some reason, your database is hosted somewhere else, feel free to set your own database path.
      */
     'db-path' => env('BEARHUB_DB_PATH'),
+
+    /**
+     * Customize where BearHub stores images.
+     */
+    'storage' => [
+        'container' => env('BEARHUB_STORAGE_CONTAINER', 'assets'),
+        'path' => env('BEARHUB_STORAGE_PATH', 'content/bearhub'),
+    ],
 ];
