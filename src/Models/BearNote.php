@@ -5,7 +5,6 @@ namespace Michavie\Bearhub\Models;
 use Carbon\Carbon;
 use Statamic\Facades\Term;
 use Illuminate\Support\Str;
-use Statamic\Facades\Taxonomy;
 use Illuminate\Database\Eloquent\Model;
 use Michavie\Bearhub\Traits\ResolvesNoteTagPivot;
 use Michavie\Bearhub\Traits\UsesBearsDatabaseConnection;
@@ -67,7 +66,6 @@ class BearNote extends Model
 
     public function getContentAndStoreImages($callback)
     {
-        // Check the note's content for images:
         preg_match_all('/\[image:.*\]/', $this->content, $matches);
 
         $replaceStack = [];
@@ -77,11 +75,8 @@ class BearNote extends Model
 
             $originalPath = Str::after(Str::beforeLast($match, ']'), '[image:');
             $originalFullPath = static::getBearPath().'/Local Files/Note Images/'.$originalPath;
-
             $newFileName = crc32($originalPath).'.'.Str::afterLast($originalPath, '.');
-
             $newFile = $callback($originalFullPath, $newFileName);
-
             $replaceStack[$match] = '![]('.$newFile.')';
         }
 

@@ -2,11 +2,13 @@
 
 namespace Michavie\Bearhub\Traits;
 
+use Illuminate\Database\Connectors\ConnectionFactory;
+
 trait UsesBearsDatabaseConnection
 {
     public static function resolveConnection($connection = null)
     {
-        $connFactory = new \Illuminate\Database\Connectors\ConnectionFactory(new \Illuminate\Container\Container);
+        $connFactory = new ConnectionFactory(new \Illuminate\Container\Container);
         $conn = $connFactory->make([
             'driver' => 'sqlite',
             'database' => static::getBearDatabasePath(),
@@ -33,7 +35,7 @@ trait UsesBearsDatabaseConnection
 
     public static function getBearPath()
     {
-        if ($bearPathFromEnv = env('BEARHUB_DB_PATH')) return $bearPathFromEnv;
+        if ($bearPathFromEnv = config('bearhub.db-path')) return $bearPathFromEnv;
 
         // Static cache in case of multiple calls per execution.
         static $bearPath;

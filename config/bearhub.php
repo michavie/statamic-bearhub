@@ -56,4 +56,10 @@ return [
          */
         'published' => env('BEARHUB_TAG_PUBLISHED', 'published'),
     ],
+
+    /**
+     * BearHub tries to locate your Bear database at "/Users/{youruser}/Library/Group Containers/XXXXXXXX.net.shinyfrog.bear/Application Data" by default.
+     * If, for some reason, your database is hosted somewhere else, feel free to set your own database path.
+     */
+    'db-path' => env('BEARHUB_DB_PATH'),
 ];
