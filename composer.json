@@ -1,5 +1,5 @@
 {
-  "name": "michavie/bearhub",
+  "name": "michavie/statamic-bearhub",
   "description": "BearHub is a Statamic Add-on that helps you sync your Bear App Notes with Statamic collections.",
   "type": "statamic-addon",
   "license": "proprietary",
