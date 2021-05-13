@@ -3,6 +3,7 @@
 namespace Michavie\Bearhub\Http\Controllers\CP;
 
 use Exception;
+use Michavie\Bearhub\SyncResult;
 use Illuminate\Routing\Controller;
 use Michavie\Bearhub\Actions\SyncNotesAction;
 
@@ -14,14 +15,13 @@ class NotesController extends Controller
             $syncedEntries = $syncNotesAction->execute();
 
             $syncedTitles = $syncedEntries
-                ->map(fn ($entries, $bearParentTag) => $entries->map(fn ($entry) => "#{$bearParentTag}: {$entry->title}"))
-                ->flatten()
-                ->toArray();
+                ->map(fn ($entries, $bearParentTag) => $entries->map(fn (SyncResult $result) => "{$result->getStateIcon()} #{$bearParentTag}: {$result->title}"))
+                ->flatten();
 
             return back()
-                ->with('syncedTitles', $syncedTitles)
+                ->with('syncedTitles', $syncedTitles->toArray())
                 ->with('success', __('Notes synced: :amount', [
-                    'amount' => $syncedEntries->count(),
+                    'amount' => $syncedTitles->count(),
                 ]));
         } catch (Exception $e) {
             return back()->with('error', $e->getMessage());

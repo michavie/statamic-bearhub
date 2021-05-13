@@ -8,11 +8,13 @@ use Illuminate\Support\Str;
 use Statamic\Facades\Entry;
 use Michavie\Bearhub\Syncable;
 use Statamic\Facades\Taxonomy;
+use Michavie\Bearhub\SyncResult;
 use Illuminate\Support\Collection;
 use Michavie\Bearhub\BearEntryField;
 use Michavie\Bearhub\Models\BearTag;
 use Statamic\Facades\AssetContainer;
 use Michavie\Bearhub\Models\BearNote;
+use Michavie\Bearhub\SyncResultState;
 use Statamic\Contracts\Auth\User as UserContract;
 use Statamic\Contracts\Entries\Entry as EntryContract;
 
@@ -32,19 +34,21 @@ class SyncNotesAction
             ->filter();
     }
 
-    private function syncEntry(Syncable $syncable, BearNote $bearNote): ?EntryContract
+    private function syncEntry(Syncable $syncable, BearNote $bearNote): ?SyncResult
     {
         $entry = $this->findEntryFor($bearNote, $syncable->statamicCollection);
         $isNew = is_null($entry);
         $author = User::findByEmail($authorEmail = config('bearhub.author-email')) ?? User::current();
-        $shouldPublish = !$bearNote->trashed && !$bearNote->archived && $bearNote->hasPublishedActionTag();
-        $shouldUpdate = $isNew || $entry->{BearEntryField::NoteChecksum} !== $bearNote->checksum;
+
+        if (!$isNew && !$bearNote->hasContentOrStateChanges($entry->{BearEntryField::NoteChecksum})) {
+            return null;
+        }
 
         throw_unless($author, Exception::class, "BearHub: Did not find user with configured email {$authorEmail}. Be sure you have set the 'BEARHUB_AUTHOR_EMAIL' env variable.");
 
-        return $shouldUpdate
-            ? $this->saveEntry($isNew, $syncable, $entry ?? Entry::make(), $bearNote, $author, $shouldPublish)
-            : null;
+        return $entry && $bearNote->trashed
+            ? $this->deleteEntry($entry)
+            : $this->saveEntry($isNew, $syncable, $entry ?? Entry::make(), $bearNote, $author);
     }
 
     private function getBearNotesFrom(string $bearTagTitle): Collection
@@ -62,21 +66,36 @@ class SyncNotesAction
             ->first();
     }
 
-    private function saveEntry(bool $isNew, Syncable $syncable, EntryContract $entry, BearNote $bearNote, UserContract $author, bool $published = true): EntryContract
+    public function deleteEntry(EntryContract $entry): SyncResult
+    {
+        $result = new SyncResult($entry->title, SyncResultState::Trashed);
+
+        Entry::delete($entry);
+
+        return $result;
+    }
+
+    private function saveEntry(bool $isNew, Syncable $syncable, EntryContract $entry, BearNote $bearNote, UserContract $author): SyncResult
     {
         $entry
             ->collection($syncable->statamicCollection)
-            ->published($published)
+            ->published($bearNote->hasPublishedActionTag())
             ->updateLastModified($author)
             ->data($this->getEntryData($syncable, $bearNote, $author));
 
-        if ($isNew || config('bearhub.update-slugs')) $entry->slug(Str::slug($bearNote->title));
-        if ($isNew) $entry->date($bearNote->created_at);
-        if (config('bearhub.update-dates')) $entry->date($bearNote->modified_at);
+        if ($isNew || config('bearhub.update-slugs')) {
+            $entry->slug(Str::slug($bearNote->title));
+        }
+        if ($isNew) {
+            $entry->date($bearNote->created_at);
+        }
+        if (config('bearhub.update-dates')) {
+            $entry->date($bearNote->modified_at);
+        }
 
         $entry->save();
 
-        return $entry;
+        return new SyncResult($entry->title, $entry->published());
     }
 
     private function getEntryData(Syncable $syncable, BearNote $bearNote, UserContract $author): array

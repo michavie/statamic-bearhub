@@ -26,6 +26,11 @@ class BearNote extends Model
         'ZMODIFICATIONDATE as modified_at',
     ];
 
+    public function hasContentOrStateChanges(string $checksum): bool
+    {
+        return $checksum !== $this->checksum;
+    }
+
     public function tags()
     {
         return $this->belongsToMany(
@@ -72,7 +77,6 @@ class BearNote extends Model
 
         foreach ($matches[0] as $match) {
             if (empty($match)) continue;
-
             $originalPath = Str::after(Str::beforeLast($match, ']'), '[image:');
             $originalFullPath = static::getBearPath().'/Local Files/Note Images/'.$originalPath;
             $newFileName = crc32($originalPath).'.'.Str::afterLast($originalPath, '.');
@@ -100,23 +104,19 @@ class BearNote extends Model
 
     public function getChecksumAttribute(): string
     {
-        return crc32($this->raw_content);
+        return crc32($this->raw_content . (int) $this->trashed . (int) $this->archived);
     }
 
     public function getCreatedAtAttribute(): Carbon
     {
-        $cocoaCoreDataTimestamp = $this->attributes['created_at'] ?? null;
-
-        return $cocoaCoreDataTimestamp
+        return ($cocoaCoreDataTimestamp = $this->attributes['created_at'] ?? null)
             ? Carbon::createFromTimestampUTC((float) $cocoaCoreDataTimestamp + $this->cocoaCoreDataTimestampSecondsToUnix)
             : Carbon::now();
     }
 
     public function getModifiedAtAttribute(): Carbon
     {
-        $cocoaCoreDataTimestamp = $this->attributes['modified_at'] ?? null;
-
-        return $cocoaCoreDataTimestamp
+        return ($cocoaCoreDataTimestamp = $this->attributes['modified_at'] ?? null)
             ? Carbon::createFromTimestampUTC((float) $cocoaCoreDataTimestamp + $this->cocoaCoreDataTimestampSecondsToUnix)
             : Carbon::now();
     }
