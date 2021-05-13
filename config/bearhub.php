@@ -43,7 +43,7 @@ return [
      * be considered but not present in the main content.
      * Hint: This is a great place to add parent-tag or action-tags.
      */
-    'meta-separator' => env('BEARHUB_TAG_SEPARATOR', '===='),
+    'meta-separator' => env('BEARHUB_META_SEPARATOR', '===='),
 
     /**
      * Action tags are ignored as taxonomies because they serve a specific purpose:
@@ -54,7 +54,7 @@ return [
          * Use this tag below the meta-separator to mark the synced entry as published.
          * Hint: If this tag does not exist in the note, the entry will be unpublished.
          */
-        'published' => env('BEARHUB_TAG_PUBLISHED', 'published'),
+        'published' => env('BEARHUB_ACTIONTAG_PUBLISHED', 'published'),
     ],
 
     /**
