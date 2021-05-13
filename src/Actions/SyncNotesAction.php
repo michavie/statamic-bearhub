@@ -39,14 +39,16 @@ class SyncNotesAction
         $entry = $this->findEntryFor($bearNote, $syncable->statamicCollection);
         $isNew = is_null($entry);
         $author = User::findByEmail($authorEmail = config('bearhub.author-email')) ?? User::current();
+        $isTrashed = $bearNote->trashed && is_null($entry);
+        $shouldUpdate = $isNew || $bearNote->hasContentOrStateChanges($entry->{BearEntryField::NoteChecksum});
 
-        if (!$isNew && !$bearNote->hasContentOrStateChanges($entry->{BearEntryField::NoteChecksum})) {
+        if (!$shouldUpdate || $isTrashed) {
             return null;
         }
 
         throw_unless($author, Exception::class, "BearHub: Did not find user with configured email {$authorEmail}. Be sure you have set the 'BEARHUB_AUTHOR_EMAIL' env variable.");
 
-        return $entry && $bearNote->trashed
+        return $bearNote->trashed
             ? $this->deleteEntry($entry)
             : $this->saveEntry($isNew, $syncable, $entry ?? Entry::make(), $bearNote, $author);
     }
