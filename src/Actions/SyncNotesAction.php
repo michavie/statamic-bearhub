@@ -3,6 +3,7 @@
 namespace Michavie\Bearhub\Actions;
 
 use Exception;
+use Statamic\Facades\Git;
 use Statamic\Facades\User;
 use Illuminate\Support\Str;
 use Statamic\Facades\Entry;
@@ -22,7 +23,11 @@ class SyncNotesAction
 {
     public function execute(): Collection
     {
-        return collect(config('bearhub.syncables'))
+        if (config('bearhub.git.auto-commit') && Git::statuses() !== null) {
+            throw new Exception('BearHub: Auto-commit is enabled. Please commit pending changes before synchronization.');
+        }
+
+        $results = collect(config('bearhub.syncables'))
             ->map(fn ($statamicProperties, $bearParentTag) => Syncable::fromConfig($bearParentTag, $statamicProperties))
             ->mapWithKeys(function (Syncable $syncable) {
                 $syncedEntries = $this->getBearNotesFrom($syncable->bearParentTag)
@@ -32,6 +37,12 @@ class SyncNotesAction
                 return $syncedEntries->isNotEmpty() ? [$syncable->bearParentTag => $syncedEntries] : [];
             })
             ->filter();
+
+        if (config('bearhub.git.auto-commit') && $message = config('bearhub.git.commit-message')) {
+            Git::commit($message);
+        }
+
+        return $results;
     }
 
     private function syncEntry(Syncable $syncable, BearNote $bearNote): ?SyncResult

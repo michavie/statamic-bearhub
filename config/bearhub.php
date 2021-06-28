@@ -58,6 +58,17 @@ return [
     ],
 
     /**
+     * BearHub loves automation.
+     * To make the content import even more seamless, you can enable auto-commits.
+     * Note: Auto-commits require you to commit any pending changes before synchronization.
+     */
+    'git' => [
+        'auto-commit' => env('BEARHUB_GIT_AUTO_COMMIT', false),
+
+        'commit-message' => 'Sync entries with BearHub',
+    ],
+
+    /**
      * BearHub tries to locate your Bear database at "/Users/{youruser}/Library/Group Containers/XXXXXXXX.net.shinyfrog.bear/Application Data" by default.
      * If, for some reason, your database is hosted somewhere else, feel free to set your own database path.
      */
