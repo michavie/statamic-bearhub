@@ -19,7 +19,7 @@ class SyncBearHubCommand extends Command
             $syncedEntries = $syncNotesAction->execute();
 
             $syncedTitles = $syncedEntries
-                ->map(fn ($entries, $bearParentTag) => $entries->map(fn (SyncResult $result) => "{$result->getStateIcon()} #{$bearParentTag}: {$result->title}"))
+                ->map(fn ($entries, $bearParentTag) => $entries->map(fn (SyncResult $result) => "{$result->getStateIcon()}  #{$bearParentTag}: {$result->title}"))
                 ->flatten()
                 ->each(fn ($output) => $this->info($output));
 
