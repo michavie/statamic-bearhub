@@ -66,6 +66,8 @@ return [
         'auto-commit' => env('BEARHUB_GIT_AUTO_COMMIT', false),
 
         'commit-message' => 'Sync entries with BearHub',
+
+        'auto-push' => env('BEARHUB_GIT_AUTO_PUSH', false),
     ],
 
     /**

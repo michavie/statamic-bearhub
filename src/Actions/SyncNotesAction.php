@@ -40,6 +40,10 @@ class SyncNotesAction
 
         if (config('bearhub.git.auto-commit') && $message = config('bearhub.git.commit-message')) {
             Git::commit($message);
+
+            if (config('bearhub.git.auto-push')) {
+                Git::push();
+            }
         }
 
         return $results;
