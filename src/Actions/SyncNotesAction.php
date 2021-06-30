@@ -79,7 +79,7 @@ class SyncNotesAction
     {
         return Entry::query()
             ->where('collection', $collection)
-            ->where(BearEntryField::NoteId, $bearNote->id)
+            ->where(BearEntryField::NoteId, $bearNote->getUniqueId())
             ->first();
     }
 
@@ -123,7 +123,7 @@ class SyncNotesAction
             'title' => $bearNote->title,
             'author' => $author->id(),
             'content' => $content,
-            BearEntryField::NoteId => $bearNote->id,
+            BearEntryField::NoteId => $bearNote->getUniqueId(),
             BearEntryField::NoteChecksum => $bearNote->checksum,
         ];
 

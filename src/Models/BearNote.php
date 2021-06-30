@@ -18,6 +18,7 @@ class BearNote extends Model
     protected int $cocoaCoreDataTimestampSecondsToUnix = 978307200;
 
     private static array $sqlSelectFields = [
+        'ZUNIQUEIDENTIFIER as unique_id',
         'ZTITLE as title',
         'ZTEXT as raw_content',
         'ZTRASHED as trashed',
@@ -76,7 +77,9 @@ class BearNote extends Model
         $replaceStack = [];
 
         foreach ($matches[0] as $match) {
-            if (empty($match)) continue;
+            if (empty($match)) {
+                continue;
+            }
             $originalPath = Str::after(Str::beforeLast($match, ']'), '[image:');
             $originalFullPath = static::getBearPath().'/Local Files/Note Images/'.$originalPath;
             $newFileName = crc32($originalPath).'.'.Str::afterLast($originalPath, '.');
@@ -85,6 +88,11 @@ class BearNote extends Model
         }
 
         return str_replace(array_keys($replaceStack), array_values($replaceStack), $this->content);
+    }
+
+    public function getUniqueId(): string
+    {
+        return $this->unique_id;
     }
 
     public function getContentAttribute(): string
