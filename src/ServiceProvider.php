@@ -21,7 +21,12 @@ class ServiceProvider extends AddonServiceProvider
     public function boot()
     {
         parent::boot();
+
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'bearhub');
+
+        $this->publishes([
+            __DIR__.'/../config/bearhub.php' => config_path('statamic/bearhub.php'),
+        ], 'bearhub');
     }
 
     public function register(): void
