@@ -21,7 +21,7 @@ class Syncable
         $this->taxonomyField = $statamicTaxonomyField;
     }
 
-    public static function fromConfig(string $bearParentTag, array $statamicProperties): static
+    public static function fromConfig(string $bearParentTag, array $statamicProperties): self
     {
         throw_unless($bearParentTag, Exception::class, 'BearHub: Configuration error with syncables - Bear Parent Tag');
         throw_unless(isset($statamicProperties['collection']), Exception::class, 'BearHub: Configuration error with syncables - Statamic Collection');

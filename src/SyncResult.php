@@ -17,10 +17,11 @@ class SyncResult
 
     public function getStateIcon(): string
     {
-        return match ($this->syncState) {
-            SyncResultState::Pending => '🚧',
-            SyncResultState::Published => '✅',
-            SyncResultState::Trashed => '🗑',
-        };
+        switch ($this->syncState) {
+            case SyncResultState::Pending: return '🚧';
+            case SyncResultState::Published: return '✅';
+            case SyncResultState::Trashed: return '🗑';
+            default: return '❓';
+        }
     }
 }
