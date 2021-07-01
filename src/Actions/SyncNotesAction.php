@@ -47,7 +47,7 @@ class SyncNotesAction
 
     private function syncEntry(Syncable $syncable, BearNote $bearNote): ?SyncResult
     {
-        $entry = $this->findEntryFor($bearNote, $syncable->statamicCollection);
+        $entry = $this->findEntryFor($bearNote, $syncable->collection);
         $isNew = is_null($entry);
         $author = User::findByEmail($authorEmail = config('bearhub.author-email')) ?? User::current();
         $isTrashed = $bearNote->trashed && is_null($entry);
@@ -60,7 +60,7 @@ class SyncNotesAction
         throw_unless($author, Exception::class, "BearHub: Did not find user with configured email {$authorEmail}. Be sure you have set the 'BEARHUB_AUTHOR_EMAIL' env variable.");
 
         return $bearNote->trashed
-            ? $this->deleteEntry($entry)
+            ? $this->deleteEntry($syncable, $entry)
             : $this->saveEntry($isNew, $syncable, $entry ?? Entry::make(), $bearNote, $author);
     }
 
@@ -79,9 +79,9 @@ class SyncNotesAction
             ->first();
     }
 
-    public function deleteEntry(EntryContract $entry): SyncResult
+    public function deleteEntry(Syncable $syncable, EntryContract $entry): SyncResult
     {
-        $result = new SyncResult($entry->title, SyncResultState::Trashed);
+        $result = new SyncResult($entry->{$syncable->titleField}, SyncResultState::Trashed);
 
         Entry::delete($entry);
 
@@ -91,7 +91,7 @@ class SyncNotesAction
     private function saveEntry(bool $isNew, Syncable $syncable, EntryContract $entry, BearNote $bearNote, UserContract $author): SyncResult
     {
         $entry
-            ->collection($syncable->statamicCollection)
+            ->collection($syncable->collection)
             ->published($bearNote->hasPublishedActionTag())
             ->updateLastModified($author)
             ->data($this->getEntryData($syncable, $bearNote, $author));
@@ -110,7 +110,7 @@ class SyncNotesAction
 
         $entry->save();
 
-        return new SyncResult($entry->title, $entry->published());
+        return new SyncResult($entry->{$syncable->titleField}, $entry->published());
     }
 
     private function getEntryData(Syncable $syncable, BearNote $bearNote, UserContract $author): array
@@ -118,16 +118,16 @@ class SyncNotesAction
         $content = $this->getContentWithImages($bearNote);
 
         $data = [
-            'title' => $bearNote->title,
+            $syncable->titleField => $bearNote->title,
+            $syncable->contentField => $content,
             'author' => $author->id(),
-            'content' => $content,
             BearEntryField::NoteId => $bearNote->getUniqueId(),
             BearEntryField::NoteChecksum => $bearNote->checksum,
         ];
 
-        if ($syncable->statamicTaxonomyField) {
-            throw_unless(Taxonomy::handleExists($syncable->statamicTaxonomyField), Exception::class, "BearHub: Taxonomy '{$syncable->statamicTaxonomyField}' does not exist.");
-            $data[$syncable->statamicTaxonomyField] = $bearNote->getCleanTags($syncable->bearParentTag, $syncable->statamicTaxonomyField);
+        if ($syncable->taxonomyField) {
+            throw_unless(Taxonomy::handleExists($syncable->taxonomyField), Exception::class, "BearHub: Taxonomy '{$syncable->taxonomyField}' does not exist.");
+            $data[$syncable->taxonomyField] = $bearNote->getCleanTags($syncable->bearParentTag, $syncable->taxonomyField);
         }
 
         return $data;

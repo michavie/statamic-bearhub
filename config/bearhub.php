@@ -3,19 +3,20 @@
 return [
 
     /**
-     * Define the connection between Bear Tag -> Statamic Collection you want to sync.
+     * Define the connection between Bear Parent Tag -> Statamic Collection you want to sync.
      *
      * Hint: BearHub makes use of Bear's nested tags. They are useful to create a hierarchical structure of your tags.
      * Learn more: https://bear.app/faq/Tags%20&%20Linking/Nested%20Tags/
-     *
-     * Bear Parent Tag: The parent of all the child tags that are synced as taxonomies
-     * Statamic Collection: The collection that will be synced with your Bear notes
-     * Statamic Taxonomy: Tags used in Bear notes will be synced with the terms of this taxonomy (blueprint) field. Set null to disable.
      */
     'syncables' => [
+
         'myblog' /* Bear Parent Tag: e.g. mycompany, blog, website, ... */ => [
-            'collection' => 'articles',
-            'taxonomy' => 'topics',
+            'collection' => 'articles', // The name of your Statamic collection to be synced
+            'fields' => [ // Define the blueprint fields of your collection
+                'title' => 'mytitle', // Remove line to use default: 'title'
+                'content' => 'mycontent', // Remove line to use default: 'content'
+                'taxonomy' => 'topics', // Remove line to disable taxonomy term synchronization
+            ],
         ],
 
         // ...
