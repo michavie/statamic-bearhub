@@ -25,7 +25,7 @@ Because of that, you can write your articles in the beautiful Bear markdown edit
 2. **Tag them** with your favorite taxonomy terms
 3. **Sync them** via command or from your dashboard
 
-# Usage
+## Usage
 
 Go to the [documentation page](https://statamic.com/addons/michavie/bearhub/docs).
 
