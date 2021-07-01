@@ -38,12 +38,8 @@ class SyncNotesAction
             })
             ->filter();
 
-        if (config('bearhub.git.auto-commit') && $message = config('bearhub.git.commit-message')) {
-            Git::commit($message);
-
-            if (config('bearhub.git.auto-push')) {
-                Git::push();
-            }
+        if ($results->isNotEmpty() && config('bearhub.git.auto-commit')) {
+            $this->commitToVersionHistory();
         }
 
         return $results;
@@ -103,9 +99,11 @@ class SyncNotesAction
         if ($isNew || config('bearhub.update-slugs')) {
             $entry->slug(Str::slug($bearNote->title));
         }
+
         if ($isNew) {
             $entry->date($bearNote->created_at);
         }
+
         if (config('bearhub.update-dates')) {
             $entry->date($bearNote->modified_at);
         }
@@ -151,5 +149,21 @@ class SyncNotesAction
 
             return $asset->url();
         });
+    }
+
+    private function commitToVersionHistory(): void
+    {
+        if (!$message = config('bearhub.git.commit-message')) {
+            return;
+        }
+
+        $originalAutoPushConfigValue = config('statamic.git.push');
+        $shouldAutoPush = config('bearhub.git.auto-push') || $originalAutoPushConfigValue;
+
+        config(['statamic.git.push' => $shouldAutoPush]);
+
+        Git::commit($message);
+
+        config(['statamic.git.push' => $originalAutoPushConfigValue]);
     }
 }
