@@ -62,3 +62,9 @@ This is useful for:
 - `published`: Notes tagged with this tag will mark the Statamic entry as published
 
 You can configure action tags to your preference in the `bearhub.php` config file.
+
+## Markdown
+
+By default, your notes are written using Bear's own Markup Language called [Polar](https://bear.app/faq/Markup%20:%20Markdown/Polar%20Bear%20markup%20language/). To have Bear and Statamic talk the same language, you most likely want to enable Bear's [Markdown Compatibility Mode](https://bear.app/faq/Markup%20:%20Markdown/Markdown%20compatibility%20mode/) in the app's settings:
+
+<p align="center"><img src="/art/markdown-compatibility.png" alt="Markdown Compatibility Mode Settings"></p>
