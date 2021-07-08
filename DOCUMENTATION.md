@@ -1,8 +1,10 @@
-# Usage
+# Docs
 
-Publish the `bearhub.php` configuration file via `php please vendor:publish --provider=Michavie\\Bearhub\\ServiceProvider`
+## Setup
 
-## Syncables — Create a connection between a Bear Parent Tag and your Statamic Collection:
+1. The `bearhub.php` config file publishes by default, but you can also do so manually using `php please vendor:publish --tag=bearhub`.
+
+2. Syncables — Create a connection between a Bear Parent Tag and your Statamic Collection:
 
 ```php
 // config/bearhub.php
@@ -21,6 +23,17 @@ return [
         // Set up as many as you want ...
     ]
 ]
+```
+
+3. (optional) If you want to run a console command instead of using the control panel, be sure to set the `BEARHUB_AUTHOR_EMAIL` env variable to an existing user's email address.
+
+4. (optional) If you want to enable the BearHub widget inside your control panel's dashboard, open the `cp.php` configuration file and add the following to the `widgets` section:
+
+```php
+[
+    'type' => 'bearhub',
+    'width' => 50,
+],
 ```
 
 ## Tagging Content with Taxonomy Terms
