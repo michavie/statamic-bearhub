@@ -2,6 +2,8 @@
 
 namespace Michavie\Bearhub;
 
+use Statamic\Statamic;
+use Illuminate\Support\Facades\Artisan;
 use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
@@ -18,15 +20,21 @@ class ServiceProvider extends AddonServiceProvider
         'cp'      => __DIR__.'/../routes/cp.php',
     ];
 
-    public function boot()
+    public function boot(): void
     {
         parent::boot();
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'bearhub');
 
-        $this->publishes([
-            __DIR__.'/../config/bearhub.php' => config_path('statamic/bearhub.php'),
-        ], 'bearhub');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/bearhub.php' => config_path('bearhub.php'),
+            ], 'bearhub');
+        }
+
+        Statamic::afterInstalled(function () {
+            Artisan::call('vendor:publish --tag=bearhub');
+        });
     }
 
     public function register(): void
